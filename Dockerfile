@@ -44,6 +44,8 @@ RUN apt-get update && \
         liblua5.4-dev \
         nodejs \
         npm \
+        pandoc \
+        chromium \
         locales && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
@@ -64,6 +66,19 @@ RUN git clone --depth=1 --branch ${NEOVIM_REF} https://github.com/neovim/neovim.
 
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
 RUN echo 'alias vim="nvim"' > /etc/profile.d/vim-alias.sh
+
+# Install mermaid-cli using system Chromium (skip Puppeteer's bundled download)
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+RUN npm install -g @mermaid-js/mermaid-cli
+
+# Mermaid diagramming tool requires --no-sandbox inside the container; embed config and wrap mmdc
+RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
+    > /usr/local/etc/puppeteer-config.json && \
+    mv /usr/local/bin/mmdc /usr/local/bin/mmdc-real && \
+    printf '#!/bin/sh\nexec mmdc-real -p /usr/local/etc/puppeteer-config.json "$@"\n' \
+    > /usr/local/bin/mmdc && \
+    chmod +x /usr/local/bin/mmdc
 
 USER ${USERNAME}
 WORKDIR ${HOME_DIR}
