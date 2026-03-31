@@ -90,9 +90,14 @@ ENV LC_ALL=en_US.UTF-8
 
 WORKDIR ${HOME_DIR}
 
-#install claude code
-ENV PATH="${HOME_DIR}/.local/bin:$PATH"
+# fix up path for ai agents
+RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+
+#install claude code (binary is "claude")
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+#install cursor agent (binary is "agent")
+RUN curl https://cursor.com/install -fsS | bash
 
 
 CMD ["bash","-lc","exec /bin/bash -l"]
