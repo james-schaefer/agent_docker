@@ -10,7 +10,7 @@ docker run -it \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v /home/schaefer/docker_bridge:/home/schaefer/docker_bridge \
-  claude-dev
+  agent-dev
 
 # Revoke access after the container exits
 xhost -local:docker
