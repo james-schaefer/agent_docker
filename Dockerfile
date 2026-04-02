@@ -4,7 +4,6 @@ ARG USERNAME=schaefer
 ARG HOME_DIR=/home/${USERNAME}
 ARG USER_UID=1000
 ARG USER_GID=1000
-ARG NEOVIM_REF=master
 
 RUN apt-get update && \
     apt-get install -y \
@@ -26,10 +25,7 @@ RUN apt-get update && \
         cmake \
         autoconf \
         automake \
-        libtool \
         gettext \
-        autopoint \
-        ninja-build \
         unzip \
         tar \
         xz-utils \
@@ -46,7 +42,8 @@ RUN apt-get update && \
         npm \
         pandoc \
         chromium \
-        locales && \
+        locales \
+        xclip && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -58,11 +55,9 @@ RUN groupadd -g ${USER_GID} ${USERNAME} && \
     useradd -m -d ${HOME_DIR} -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} && \
     mkdir -p ${HOME_DIR}/docker_bridge
 
-# Neovim build from sources
-RUN git clone --depth=1 --branch ${NEOVIM_REF} https://github.com/neovim/neovim.git /tmp/neovim && \
-    make -C /tmp/neovim CMAKE_BUILD_TYPE=RelWithDebInfo && \
-    make -C /tmp/neovim install && \
-    rm -rf /tmp/neovim
+# Neovim 0.12 release binary
+RUN curl -fsSL https://github.com/neovim/neovim/releases/download/v0.12.0/nvim-linux-x86_64.tar.gz \
+    | tar -xz -C /usr/local --strip-components=1
 
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
 RUN echo 'alias vim="nvim"' > /etc/profile.d/vim-alias.sh
@@ -89,6 +84,9 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 WORKDIR ${HOME_DIR}
+
+# Install neovim config
+RUN git clone --depth=1 https://github.com/james-schaefer/neovim_config.git ~/.config/nvim
 
 # fix up path for ai agents
 RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
