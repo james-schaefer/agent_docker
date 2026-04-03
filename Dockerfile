@@ -43,7 +43,8 @@ RUN apt-get update && \
         pandoc \
         chromium \
         locales \
-        xclip && \
+        xclip \
+        x11-apps && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -96,6 +97,9 @@ RUN curl -fsSL https://claude.ai/install.sh | bash
 
 #install cursor agent (binary is "agent")
 RUN curl https://cursor.com/install -fsS | bash
+
+#install codex (binary is "codex")
+RUN npm install -g @openai/codex
 
 
 CMD ["bash","-lc","exec /bin/bash -l"]

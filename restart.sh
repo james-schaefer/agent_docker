@@ -5,5 +5,5 @@ xhost +local:docker
 
 docker restart agent-dev
 
-# Revoke access after the container exits
-xhost -local:docker
+# Note: xhost is NOT revoked here because docker restart is non-blocking.
+# Access will be revoked when the container is next stopped via run.sh.
