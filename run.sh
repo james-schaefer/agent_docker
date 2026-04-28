@@ -7,6 +7,7 @@ xhost +local:docker
 docker run -it \
   --hostname agent-dev \
   --name agent-dev \
+  --gpus all \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v /home/schaefer/docker_bridge:/home/schaefer/docker_bridge \

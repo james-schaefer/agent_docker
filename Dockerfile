@@ -56,8 +56,14 @@ RUN groupadd -g ${USER_GID} ${USERNAME} && \
     useradd -m -d ${HOME_DIR} -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} && \
     mkdir -p ${HOME_DIR}/docker_bridge
 
-# Neovim 0.12 release binary
-RUN curl -fsSL https://github.com/neovim/neovim/releases/download/v0.12.0/nvim-linux-x86_64.tar.gz \
+# Neovim 0.12 release binary — detect arch so the image builds on both x86_64 and arm64
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+      amd64)   NVIM_ARCH="x86_64" ;; \
+      arm64)   NVIM_ARCH="arm64"  ;; \
+      *)       echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.0/nvim-linux-${NVIM_ARCH}.tar.gz" \
     | tar -xz -C /usr/local --strip-components=1
 
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
