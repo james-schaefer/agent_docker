@@ -14,7 +14,6 @@ RUN apt-get update && \
         linux-headers-generic \
         binutils \
         strace \
-        ltrace \
         ripgrep \
         libcapstone4 \
         libcapstone-dev \
@@ -63,7 +62,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
       arm64)   NVIM_ARCH="arm64"  ;; \
       *)       echo "Unsupported arch: $ARCH" && exit 1 ;; \
     esac && \
-    curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.0/nvim-linux-${NVIM_ARCH}.tar.gz" \
+    curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.2/nvim-linux-${NVIM_ARCH}.tar.gz" \
     | tar -xz -C /usr/local --strip-components=1
 
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
@@ -96,7 +95,7 @@ WORKDIR ${HOME_DIR}
 RUN git clone --depth=1 https://github.com/james-schaefer/neovim_config.git ~/.config/nvim
 
 # fix up path for ai agents
-RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+RUN echo 'export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 
 #install claude code (binary is "claude")
 RUN curl -fsSL https://claude.ai/install.sh | bash
@@ -105,7 +104,7 @@ RUN curl -fsSL https://claude.ai/install.sh | bash
 RUN curl https://cursor.com/install -fsS | bash
 
 #install codex (binary is "codex")
-RUN npm install -g @openai/codex
+RUN npm install --prefix=/home/${USERNAME}/.npm-global -g @openai/codex
 
 
 CMD ["bash","-lc","exec /bin/bash -l"]
