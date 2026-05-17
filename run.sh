@@ -5,8 +5,8 @@
 xhost +local:docker
 
 docker run -it \
-  --hostname agent-dev \
   --name agent-dev \
+  --network host \
   --gpus all \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \

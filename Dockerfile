@@ -101,10 +101,13 @@ RUN echo 'export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"' >> ~/.bash
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
 #install cursor agent (binary is "agent")
-RUN curl https://cursor.com/install -fsS | bash
+#RUN curl https://cursor.com/install -fsS | bash
 
 #install codex (binary is "codex")
-RUN npm install --prefix=/home/${USERNAME}/.npm-global -g @openai/codex
+#RUN npm install --prefix=/home/${USERNAME}/.npm-global -g @openai/codex
+
+#install aider (binary is "aider")
+#RUN pip3 install --user --break-system-packages aider-chat
 
 
 CMD ["bash","-lc","exec /bin/bash -l"]

@@ -28,6 +28,12 @@ RUN ARCH=$(dpkg --print-architecture) && \
 Added `--gpus all` to the `docker run` command so all NVIDIA GPUs are visible inside
 the container via the NVIDIA Container Toolkit.
 
+### run.sh — host networking
+
+Changed to `--network host` to allow the container to reach local services on the host
+(e.g. a vLLM instance on port 8000). As a side effect, `--hostname` is not compatible
+with host networking and was removed; the container inherits the host's hostname.
+
 ## Host Prerequisites (DGX Spark)
 
 ### 1. Verify NVIDIA Container Toolkit is installed
