@@ -10,7 +10,7 @@ RUN apt-get update && \
         bash \
         curl \
         ca-certificates \
-        build-essential\
+        build-essential \
         linux-headers-generic \
         binutils \
         strace \
@@ -43,6 +43,7 @@ RUN apt-get update && \
         chromium \
         locales \
         xclip \
+        jq \
         x11-apps && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
@@ -50,12 +51,12 @@ RUN apt-get update && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8
 
-# fix up user account
+# Fix up user account
 RUN groupadd -g ${USER_GID} ${USERNAME} && \
     useradd -m -d ${HOME_DIR} -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} && \
     mkdir -p ${HOME_DIR}/docker_bridge
 
-# Neovim 0.12 release binary — detect arch so the image builds on both x86_64 and arm64
+# Neovim 0.12 release binary
 RUN ARCH=$(dpkg --print-architecture) && \
     case "$ARCH" in \
       amd64)   NVIM_ARCH="x86_64" ;; \
@@ -68,12 +69,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
 RUN echo 'alias vim="nvim"' > /etc/profile.d/vim-alias.sh
 
-# Install mermaid-cli using system Chromium (skip Puppeteer's bundled download)
+# Install mermaid-cli
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 RUN npm install -g @mermaid-js/mermaid-cli
 
-# Mermaid diagramming tool requires --no-sandbox inside the container; embed config and wrap mmdc
 RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
     > /usr/local/etc/puppeteer-config.json && \
     mv /usr/local/bin/mmdc /usr/local/bin/mmdc-real && \
@@ -84,30 +84,41 @@ RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
 USER ${USERNAME}
 WORKDIR ${HOME_DIR}
 
+# System-wide environment variables
 ENV EDITOR=nvim
 ENV VISUAL=nvim
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-WORKDIR ${HOME_DIR}
+# Create Claude Code settings.json with vLLM configuration
+RUN mkdir -p ~/.claude && \
+    cat > ~/.claude/settings.json << 'EOF'
+{
+  "apiKeyHelper": "echo 'dummy-key'",
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8000",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "DISABLE_AUTOUPDATER": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "ANTHROPIC_MODEL": "default_model",
+    "ANTHROPIC_SMALL_FAST_MODEL": "default_model",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "default_model",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "default_model",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "default_model"
+  }
+}
+EOF
 
 # Install neovim config
 RUN git clone --depth=1 https://github.com/james-schaefer/neovim_config.git ~/.config/nvim
 
-# fix up path for ai agents
+# Fix up path for AI agents
 RUN echo 'export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 
-#install claude code (binary is "claude")
+# Install Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
-#install cursor agent (binary is "agent")
-#RUN curl https://cursor.com/install -fsS | bash
-
-#install codex (binary is "codex")
-#RUN npm install --prefix=/home/${USERNAME}/.npm-global -g @openai/codex
-
-#install aider (binary is "aider")
-#RUN pip3 install --user --break-system-packages aider-chat
-
-
 CMD ["bash","-lc","exec /bin/bash -l"]
+
