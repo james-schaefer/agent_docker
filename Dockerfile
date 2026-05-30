@@ -66,6 +66,16 @@ RUN ARCH=$(dpkg --print-architecture) && \
     curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.2/nvim-linux-${NVIM_ARCH}.tar.gz" \
     | tar -xz -C /usr/local --strip-components=1
 
+# Zig 0.16.0 release binary
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+      amd64)   ZIG_ARCH="x86_64" ;; \
+      arm64)   ZIG_ARCH="aarch64" ;; \
+      *)       echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://ziglang.org/download/0.16.0/zig-${ZIG_ARCH}-linux-0.16.0.tar.xz" \
+    | tar -xJ -C /usr/local --strip-components=1
+
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
 RUN echo 'alias vim="nvim"' > /etc/profile.d/vim-alias.sh
 
