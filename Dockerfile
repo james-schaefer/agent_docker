@@ -90,27 +90,6 @@ ENV VISUAL=nvim
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Create Claude Code settings.json with vLLM configuration
-RUN mkdir -p ~/.claude && \
-    cat > ~/.claude/settings.json << 'EOF'
-{
-  "apiKeyHelper": "echo 'dummy-key'",
-  "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:8000",
-    "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "DISABLE_AUTOUPDATER": "1",
-    "DISABLE_ERROR_REPORTING": "1",
-    "ANTHROPIC_MODEL": "default_model",
-    "ANTHROPIC_SMALL_FAST_MODEL": "default_model",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "default_model",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "default_model",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "default_model"
-  }
-}
-EOF
-
 # Install neovim config
 RUN git clone --depth=1 https://github.com/james-schaefer/neovim_config.git ~/.config/nvim
 
