@@ -44,7 +44,8 @@ RUN apt-get update && \
         locales \
         xclip \
         jq \
-        x11-apps && \
+        x11-apps \
+        graphviz && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -90,6 +91,9 @@ RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
     printf '#!/bin/sh\nexec mmdc-real -p /usr/local/etc/puppeteer-config.json "$@"\n' \
     > /usr/local/bin/mmdc && \
     chmod +x /usr/local/bin/mmdc
+
+# Install pi coding agent
+RUN npm install -g @earendil-works/pi-coding-agent
 
 USER ${USERNAME}
 WORKDIR ${HOME_DIR}
