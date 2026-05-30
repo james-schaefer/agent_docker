@@ -20,6 +20,5 @@ toolchain.
 | run.sh         | Runs container with X11, GPU, host networking, volume mounts |
 | exec.sh        | Opens extra shell in running container                       |
 | restart.sh     | Restarts container (re-grants X access)                      |
-| archive.sh     | Renames old container/image to *.old before rebuild          \
-| archive.sh     | Renames old container/image to *.old before rebuild          \
-\ archive_run.sh \ Runs the archived container                                  \
+| archive.sh     | Renames old container/image to *.old before rebuild          |
+| archive_run.sh | Runs the archived container                                  |

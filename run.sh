@@ -6,6 +6,7 @@ xhost +local:docker
 
 docker run -it \
   --name agent-dev \
+  --hostname agent-dev \
   --network host \
   --gpus all \
   -e DISPLAY=$DISPLAY \

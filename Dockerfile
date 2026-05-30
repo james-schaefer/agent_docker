@@ -37,8 +37,6 @@ RUN apt-get update && \
         libzstd-dev \
         lua5.4 \
         liblua5.4-dev \
-        nodejs \
-        npm \
         pandoc \
         chromium \
         locales \
@@ -56,6 +54,11 @@ RUN apt-get update && \
 RUN groupadd -g ${USER_GID} ${USERNAME} && \
     useradd -m -d ${HOME_DIR} -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} && \
     mkdir -p ${HOME_DIR}/docker_bridge
+
+# Node.js 22 LTS from NodeSource (Debian's nodejs is v18, too old for pi.dev's /v regex flag)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 # Neovim 0.12 release binary
 RUN ARCH=$(dpkg --print-architecture) && \
@@ -77,8 +80,12 @@ RUN ARCH=$(dpkg --print-architecture) && \
     curl -fsSL "https://ziglang.org/download/0.16.0/zig-${ZIG_ARCH}-linux-0.16.0.tar.xz" \
     | tar -xJ -C /usr/local --strip-components=1
 
+# Symlink vi, vim, neovim → nvim (system-wide, works in scripts and non-interactive shells)
+RUN ln -sf /usr/local/bin/nvim /usr/local/bin/vim && \
+    ln -sf /usr/local/bin/nvim /usr/local/bin/vi && \
+    ln -sf /usr/local/bin/nvim /usr/local/bin/neovim
+
 RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
-RUN echo 'alias vim="nvim"' > /etc/profile.d/vim-alias.sh
 
 # Install mermaid-cli
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
