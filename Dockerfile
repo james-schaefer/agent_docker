@@ -85,19 +85,21 @@ RUN ln -sf /usr/local/bin/nvim /usr/local/bin/vim && \
     ln -sf /usr/local/bin/nvim /usr/local/bin/vi && \
     ln -sf /usr/local/bin/nvim /usr/local/bin/neovim
 
-RUN echo 'export PS1="\u@\h:\w\$ "' > /etc/profile.d/prompt.sh
+RUN echo 'export PS1="\u@agent-dev:\w\$ "' > /etc/profile.d/prompt.sh
 
+# ----------------------------------------------------------------------------------------
 # Install mermaid-cli
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-RUN npm install -g @mermaid-js/mermaid-cli
-
-RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
-    > /usr/local/etc/puppeteer-config.json && \
-    mv /usr/local/bin/mmdc /usr/local/bin/mmdc-real && \
-    printf '#!/bin/sh\nexec mmdc-real -p /usr/local/etc/puppeteer-config.json "$@"\n' \
-    > /usr/local/bin/mmdc && \
-    chmod +x /usr/local/bin/mmdc
+# ----------------------------------------------------------------------------------------
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+# RUN npm install -g @mermaid-js/mermaid-cli
+# 
+# RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
+#     > /usr/local/etc/puppeteer-config.json && \
+#     mv /usr/local/bin/mmdc /usr/local/bin/mmdc-real && \
+#     printf '#!/bin/sh\nexec mmdc-real -p /usr/local/etc/puppeteer-config.json "$@"\n' \
+#     > /usr/local/bin/mmdc && \
+#     chmod +x /usr/local/bin/mmdc
 
 # Install pi coding agent
 RUN npm install -g @earendil-works/pi-coding-agent
