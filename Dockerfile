@@ -78,7 +78,8 @@ RUN ARCH=$(dpkg --print-architecture) && \
       *)       echo "Unsupported arch: $ARCH" && exit 1 ;; \
     esac && \
     curl -fsSL "https://ziglang.org/download/0.16.0/zig-${ZIG_ARCH}-linux-0.16.0.tar.xz" \
-    | tar -xJ -C /usr/local --strip-components=1
+    | tar -xJ -C /usr/local --strip-components=1 && \
+    ln -sf /usr/local/zig /usr/local/bin/zig
 
 # Symlink vi, vim, neovim → nvim (system-wide, works in scripts and non-interactive shells)
 RUN ln -sf /usr/local/bin/nvim /usr/local/bin/vim && \
