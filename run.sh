@@ -13,7 +13,6 @@ docker run -it \
   --name agent-dev \
   --hostname agent-dev \
   --network host \
-  --gpus all \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v /home/schaefer/docker_bridge:/home/schaefer/docker_bridge \
@@ -23,3 +22,4 @@ docker run -it \
 
 # Revoke access after the container exits
 xhost -local:docker
+

@@ -38,11 +38,12 @@ RUN apt-get update && \
         lua5.4 \
         liblua5.4-dev \
         pandoc \
+        graphviz\
         chromium \
         locales \
-        xclip \
         jq \
         x11-apps \
+        xclip \
         graphviz && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
@@ -56,7 +57,7 @@ RUN groupadd -g ${USER_GID} ${USERNAME} && \
     mkdir -p ${HOME_DIR}/docker_bridge
 
 # Node.js 22 LTS from NodeSource (Debian's nodejs is v18, too old for pi.dev's /v regex flag)
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
@@ -67,7 +68,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
       arm64)   NVIM_ARCH="arm64"  ;; \
       *)       echo "Unsupported arch: $ARCH" && exit 1 ;; \
     esac && \
-    curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.2/nvim-linux-${NVIM_ARCH}.tar.gz" \
+    curl -fsSL "https://github.com/neovim/neovim/releases/download/v0.12.3/nvim-linux-${NVIM_ARCH}.tar.gz" \
     | tar -xz -C /usr/local --strip-components=1
 
 # Zig 0.16.0 release binary
@@ -87,20 +88,6 @@ RUN ln -sf /usr/local/bin/nvim /usr/local/bin/vim && \
     ln -sf /usr/local/bin/nvim /usr/local/bin/neovim
 
 RUN echo 'export PS1="\u@agent-dev:\w\$ "' > /etc/profile.d/prompt.sh
-
-# ----------------------------------------------------------------------------------------
-# Install mermaid-cli
-# ----------------------------------------------------------------------------------------
-# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-# RUN npm install -g @mermaid-js/mermaid-cli
-# 
-# RUN echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' \
-#     > /usr/local/etc/puppeteer-config.json && \
-#     mv /usr/local/bin/mmdc /usr/local/bin/mmdc-real && \
-#     printf '#!/bin/sh\nexec mmdc-real -p /usr/local/etc/puppeteer-config.json "$@"\n' \
-#     > /usr/local/bin/mmdc && \
-#     chmod +x /usr/local/bin/mmdc
 
 # Install pi coding agent
 RUN npm install -g @earendil-works/pi-coding-agent
