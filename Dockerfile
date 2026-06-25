@@ -39,6 +39,10 @@ RUN apt-get update && \
         liblua5.4-dev \
         pandoc \
         graphviz\
+        texlive-latex-recommended \
+        texlive-latex-extra \
+        texlive-fonts-recommended \
+        latexmk \
         chromium \
         locales \
         jq \
