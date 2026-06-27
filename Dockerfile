@@ -38,7 +38,6 @@ RUN apt-get update && \
         lua5.4 \
         liblua5.4-dev \
         pandoc \
-        graphviz\
         texlive-latex-recommended \
         texlive-latex-extra \
         texlive-fonts-recommended \
@@ -51,6 +50,8 @@ RUN apt-get update && \
         jq \
         x11-apps \
         xclip \
+        gnuplot-nox \
+        datamash \
         graphviz && \
     rm -rf /var/lib/apt/lists/* && \
     git lfs install --system --skip-repo && \
