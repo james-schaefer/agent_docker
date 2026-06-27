@@ -99,6 +99,8 @@ RUN echo 'export PS1="\u@agent-dev:\w\$ "' > /etc/profile.d/prompt.sh
 # Linux Kernel-style Sphinx docs toolchain (pinned to 6.x-kernel-supported versions).
 # Installed into an isolated venv so it doesn't clash with distro Python packages;
 # the kernel's Documentation/Makefile finds sphinx-build via PATH.
+# Note: ditaa is a Java application (distributed as a JAR), not a PyPI package, so
+# it is NOT installed via pip here -- install its JAR separately if/when needed.
 RUN python3 -m venv /opt/sphinx-venv && \
     /opt/sphinx-venv/bin/python -m pip install --upgrade pip && \
     /opt/sphinx-venv/bin/pip install \
@@ -107,7 +109,6 @@ RUN python3 -m venv /opt/sphinx-venv && \
         "sphinxcontrib-svg2pdfconverter==1.2.2" \
         "pymupdf==1.23.8" \
         "ply==3.11" \
-        "ditaa==0.11" \
         "Babel" "Jinja2" "MarkupSafe" "alabaster" "docutils" \
         "imagesize" "packaging" "pygments" "requests" "snowballstemmer" \
         "sphinxcontrib-applehelp" "sphinxcontrib-devhelp" \
