@@ -22,6 +22,10 @@ RUN apt-get update && \
         python3-dev \
         python3-pip \
         cmake \
+        gcc-arm-none-eabi \
+        binutils-arm-none-eabi \
+        libnewlib-arm-none-eabi \
+        libstdc++-arm-none-eabi-newlib \
         autoconf \
         automake \
         gettext \
