@@ -122,6 +122,11 @@ RUN python3 -m venv /opt/sphinx-venv && \
     ln -sf /opt/sphinx-venv/bin/sphinx-build /usr/local/bin/sphinx-build && \
     ln -sf /opt/sphinx-venv/bin/sphinx-apidoc /usr/local/bin/sphinx-apidoc
 
+# uv (Astral's Python package manager) — prebuilt binary copied from the
+# official image, so no shell installer / curl|sh pipeline is needed.
+# Pin the tag to a uv release; bump when upgrading.
+COPY --from=ghcr.io/astral-sh/uv:0.12.7 /uv /uvx /usr/local/bin/
+
 # Install pi coding agent
 RUN npm install -g @earendil-works/pi-coding-agent
 
